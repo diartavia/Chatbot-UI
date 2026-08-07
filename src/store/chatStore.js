@@ -3,6 +3,13 @@ import { deleteMessage, getConversation, sendMessage as sendChatMessage, updateM
 
 const fallbackReply = 'No pude conectar con el backend; dejé tu mensaje registrado localmente.';
 
+const seedConversation = [
+  { id: 1, role: 'assistant', content: 'Hola Diego, revisé tus pendientes de la semana y ya detecté los puntos más urgentes.', timestamp: '2026-07-23T08:00:00.000Z' },
+  { id: 2, role: 'user', content: 'Necesito un plan para el parcial de IA y el avance del proyecto.', timestamp: '2026-07-23T08:01:00.000Z' },
+  { id: 3, role: 'assistant', content: 'Perfecto. Te separo bloques de estudio y te ordeno el avance por prioridad.', timestamp: '2026-07-23T08:02:00.000Z' },
+  { id: 4, role: 'user', content: 'También quiero dejar libre el jueves para no chocar con el lab.', timestamp: '2026-07-23T08:03:00.000Z' },
+];
+
 const normalizeMessage = (message, index) => ({
   id: message.id ?? index + 1,
   timestamp: message.timestamp ?? new Date().toISOString(),
@@ -21,8 +28,9 @@ export const useChatStore = create((set, get) => ({
       set({ data: messages, loading: false });
       return messages;
     } catch (error) {
-      set({ loading: false, error: error?.response?.data?.detail ?? error?.message ?? 'No se pudo cargar el chat.' });
-      return [];
+      const fallbackError = error?.response?.data?.detail ?? error?.message ?? 'No se pudo cargar el chat.';
+      set({ loading: false, data: seedConversation, error: fallbackError });
+      return seedConversation;
     }
   },
   createMessage: async (message) => {

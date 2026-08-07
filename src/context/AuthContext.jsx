@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { getProfile, loginWithGoogle, loginWithOutlook, logout as logoutService } from '../services/authService';
+import { decodeAuthToken, getProfile, loginWithGoogle, loginWithOutlook, logout as logoutService } from '../services/authService';
 
 const AuthContext = createContext(null);
 
@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
     if (session?.token) {
       window.localStorage.setItem(tokenKey, session.token);
     }
-    setUser(session?.user ?? null);
+    setUser(session?.user ?? decodeAuthToken(session?.token ?? window.localStorage.getItem(tokenKey)) ?? null);
   };
 
   const clearSession = () => {

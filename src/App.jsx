@@ -7,6 +7,7 @@ import CalendarPage from './pages/CalendarPage';
 import TasksPage from './pages/TasksPage';
 import KanbanPage from './pages/KanbanPage';
 import SettingsPage from './pages/SettingsPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import { useThemeStore } from './store/themeStore';
 import { IconCalendar, IconColumns, IconListCheck, IconMessage, IconSettings } from '@tabler/icons-react';
 import { useChatStore } from './store/chatStore';
@@ -112,6 +113,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route
           path="/*"
           element={

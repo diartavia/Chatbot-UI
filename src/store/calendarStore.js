@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { addDays, addMonths, addWeeks, dateStringFromDate, dateTimeFromParts, parseEventDate, startOfDay } from './calendarUtils';
+import { getEvents as getCalendarEvents } from '../services/calendarService';
 
 const julyEvents = [
   {
@@ -216,9 +217,13 @@ export const useCalendarStore = create(
       fetchEvents: async () => {
         set({ loading: true, error: null });
         try {
-          set({ events: sortEvents(julyEvents), calendars: connectedCalendars, loading: false });
+          const currentMonth = get().currentDate.getMonth() + 1;
+          const currentYear = get().currentDate.getFullYear();
+          const events = await getCalendarEvents(currentMonth, currentYear);
+          const normalizedEvents = Array.isArray(events) ? events.map(normalizeEvent) : julyEvents;
+          set({ events: sortEvents(normalizedEvents), calendars: connectedCalendars, loading: false });
         } catch (error) {
-          set({ error: error instanceof Error ? error.message : 'No se pudo cargar el calendario.', loading: false });
+          set({ events: sortEvents(julyEvents), calendars: connectedCalendars, error: error instanceof Error ? error.message : 'No se pudo cargar el calendario.', loading: false });
         }
       },
       saveDraftEvent: () => {
